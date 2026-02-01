@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EduPortal | PYQ & Resources</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --secondary: #f97316;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: var(--light); color: var(--dark); }
+
+        /* --- AUTH SECTION --- */
+        #auth-page {
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
+        }
+        .auth-card {
+            background: white; padding: 2rem; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%; max-width: 400px;
+        }
+        .tabs { display: flex; margin-bottom: 1.5rem; gap: 10px; }
+        .tab-btn { flex: 1; padding: 10px; border: none; cursor: pointer; border-radius: 5px; }
+        .tab-btn.active { background: var(--primary); color: white; }
+        
+        .form-group { margin-bottom: 1rem; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px; }
+        .hidden { display: none; }
+        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+
+        /* --- DASHBOARD --- */
+        nav {
+            background: white; padding: 1rem 5%; display: flex; justify-content: space-between;
+            align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0;
+        }
+        .nav-links { list-style: none; display: flex; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 500; }
+        .menu-icon { display: none; font-size: 1.5rem; cursor: pointer; }
+
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+        .hero { background: white; padding: 2rem; border-radius: 15px; margin-bottom: 2rem; border-left: 8px solid var(--primary); }
+        .quote-box { font-style: italic; color: #666; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee; }
+
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .btn-action { padding: 2rem; border-radius: 12px; border: none; color: white; font-size: 1.2rem; font-weight: bold; cursor: pointer; }
+        .btn-pyq { background: var(--primary); }
+        .btn-imp { background: var(--secondary); }
+
+        .section-card { background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; }
+        .todo-item { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+
+        /* --- MOBILE VIEW --- */
+        @media (max-width: 768px) {
+            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; background: white; width: 100%; padding: 1rem; }
+            .nav-links.active { display: flex; }
+            .menu-icon { display: block; }
+            .action-btns { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-page">
+        <div class="auth-card">
+            <div class="tabs">
+                <button class="tab-btn active" onclick="toggleAuth('login')">Login</button>
+                <button class="tab-btn" onclick="toggleAuth('signup')">Sign Up</button>
+            </div>
+
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <select id="login-role" onchange="toggleAdminKey()">
+                        <option value="student">Student</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <input type="text" id="admin-key" class="hidden" placeholder="Admin Secret Key">
+                <button type="submit" class="btn-main" style="margin-top:15px">Enter Dashboard</button>
+            </form>
+
+            <form id="signup-form" class="hidden">
+                <input type="text" placeholder="Full Name" required>
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Password" required>
+                <button type="submit" class="btn-main" style="margin-top:15px">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard" class="hidden">
+        <nav>
+            <div class="logo"><h2>Edu<b>Portal</b></h2></div>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#">Home</a></li>
+                <li><a href="#">Profile</a></li>
+                <li><a href="#">About</a></li>
+            </ul>
+            <div class="menu-icon" onclick="toggleMenu()">☰</div>
+        </nav>
+
+        <div class="container">
+            <section class="hero">
+                <h1 id="welcome-msg">Welcome, User!</h1>
+                <p id="current-date"></p>
+                <div class="quote-box">
+                    <p id="random-quote">"Loading inspiration..."</p>
+                </div>
+            </section>
+
+            <div class="action-btns">
+                <button class="btn-action btn-pyq" onclick="showSection('pyq-view')"><i class="fas fa-file-pdf"></i> View PYQs</button>
+                <button class="btn-action btn-imp"><i class="fas fa-star"></i> Important Qs</button>
+            </div>
+
+            <div class="section-card">
+                <h3>My Study List</h3>
+                <div id="todo-list">
+                    <div class="todo-item"><input type="checkbox"> Complete Maths Assignment</div>
+                    <div class="todo-item"><input type="checkbox"> Read Physics Chapter 4</div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h3>Leave a Review</h3>
+                <textarea id="rev-input" style="width:100%; padding:10px; margin:10px 0;" placeholder="Tell us what you think..."></textarea>
+                <button class="btn-main" onclick="addReview()">Post Review</button>
+                <div id="reviews-display" style="margin-top:20px; border-top:1px solid #eee; padding-top:10px;">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-page" class="hidden container">
+        <div class="section-card">
+            <h2>Admin: Upload PYQ</h2>
+            <div class="form-group">
+                <input type="text" id="subj" placeholder="Subject">
+                <input type="text" id="year" placeholder="Year (e.g. 2024)">
+                <input type="text" id="sem" placeholder="Semester">
+                <input type="file" id="file" style="border:none">
+                <button class="btn-main" onclick="alert('Ready for Firebase Connection!')">Upload Images</button>
+            </div>
+            <button onclick="location.reload()">Back to Home</button>
+        </div>
+    </div>
+
+    <script>
+        // --- NAVIGATION & UI LOGIC ---
+        function toggleAuth(type) {
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            const tabs = document.querySelectorAll('.tab-btn');
+
+            if(type === 'login') {
+                loginForm.classList.remove('hidden');
+                signupForm.classList.add('hidden');
+                tabs[0].classList.add('active');
+                tabs[1].classList.remove('active');
+            } else {
+                loginForm.classList.add('hidden');
+                signupForm.classList.remove('hidden');
+                tabs[1].classList.add('active');
+                tabs[0].classList.remove('active');
+            }
+        }
+
+        function toggleAdminKey() {
+            const role = document.getElementById('login-role').value;
+            const keyInput = document.getElementById('admin-key');
+            role === 'admin' ? keyInput.classList.remove('hidden') : keyInput.classList.add('hidden');
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const role = document.getElementById('login-role').value;
+            document.getElementById('auth-page').classList.add('hidden');
+            
+            if(role === 'admin') {
+                document.getElementById('admin-page').classList.remove('hidden');
+            } else {
+                document.getElementById('dashboard').classList.remove('hidden');
+                initDashboard();
+            }
+        }
+
+        function toggleMenu() {
+            document.getElementById('navLinks').classList.toggle('active');
+        }
+
+        // --- DASHBOARD FEATURES ---
+        function initDashboard() {
+            document.getElementById('current-date').innerText = new Date().toDateString();
+            const quotes = [
+                "Success is the sum of small efforts, repeated day in and day out.",
+                "Education is the most powerful weapon which you can use to change the world.",
+                "The expert in anything was once a beginner."
+            ];
+            document.getElementById('random-quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
+        }
+
+        function addReview() {
+            const val = document.getElementById('rev-input').value;
+            if(!val) return;
+            const div = document.createElement('div');
+            div.innerHTML = `<p style="background:#f9f9f9; padding:10px; border-radius:5px; margin-bottom:5px">⭐ ${val}</p>`;
+            document.getElementById('reviews-display').prepend(div);
+            document.getElementById('rev-input').value = "";
+        }
+    </script>
+</body>
+</html>

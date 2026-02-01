@@ -3,216 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduPortal | PYQ & Resources</title>
+    <title>EduPortal | Real-time Resources</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #4f46e5;
-            --secondary: #f97316;
-            --dark: #1f2937;
-            --light: #f3f4f6;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        :root { --primary: #4f46e5; --secondary: #f97316; --dark: #1f2937; --light: #f3f4f6; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background-color: var(--light); color: var(--dark); }
+        .hidden { display: none !important; }
 
-        /* --- AUTH SECTION --- */
-        #auth-page {
-            display: flex; justify-content: center; align-items: center; min-height: 100vh;
-        }
-        .auth-card {
-            background: white; padding: 2rem; border-radius: 12px; shadow: 0 4px 6px rgba(0,0,0,0.1);
-            width: 100%; max-width: 400px;
-        }
-        .tabs { display: flex; margin-bottom: 1.5rem; gap: 10px; }
-        .tab-btn { flex: 1; padding: 10px; border: none; cursor: pointer; border-radius: 5px; }
+        /* Auth UI */
+        #auth-page { display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #6366f1; }
+        .auth-card { background: white; padding: 2.5rem; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
+        .tabs { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+        .tab-btn { flex: 1; padding: 10px; border: none; cursor: pointer; border-radius: 6px; font-weight: bold; }
         .tab-btn.active { background: var(--primary); color: white; }
-        
-        .form-group { margin-bottom: 1rem; }
-        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 5px; }
-        .hidden { display: none; }
-        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        input, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; margin-top: 10px; }
+        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 20px; }
 
-        /* --- DASHBOARD --- */
-        nav {
-            background: white; padding: 1rem 5%; display: flex; justify-content: space-between;
-            align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); position: sticky; top: 0;
-        }
+        /* Dashboard UI */
+        nav { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .nav-links { list-style: none; display: flex; gap: 2rem; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 500; }
-        .menu-icon { display: none; font-size: 1.5rem; cursor: pointer; }
-
         .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
-        .hero { background: white; padding: 2rem; border-radius: 15px; margin-bottom: 2rem; border-left: 8px solid var(--primary); }
-        .quote-box { font-style: italic; color: #666; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eee; }
-
-        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
-        .btn-action { padding: 2rem; border-radius: 12px; border: none; color: white; font-size: 1.2rem; font-weight: bold; cursor: pointer; }
-        .btn-pyq { background: var(--primary); }
-        .btn-imp { background: var(--secondary); }
-
-        .section-card { background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; }
-        .todo-item { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
-
-        /* --- MOBILE VIEW --- */
-        @media (max-width: 768px) {
-            .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; background: white; width: 100%; padding: 1rem; }
-            .nav-links.active { display: flex; }
-            .menu-icon { display: block; }
-            .action-btns { grid-template-columns: 1fr; }
-        }
+        .hero { background: white; padding: 2rem; border-radius: 15px; border-left: 8px solid var(--primary); }
+        .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem; }
+        .btn-action { padding: 1.5rem; border-radius: 12px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        
+        .card { background: white; padding: 1.5rem; border-radius: 12px; margin-top: 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .review-box { border-bottom: 1px solid #eee; padding: 10px 0; }
+        
+        @media (max-width: 768px) { .action-btns { grid-template-columns: 1fr; } .nav-links { display: none; } }
     </style>
 </head>
 <body>
 
     <div id="auth-page">
         <div class="auth-card">
+            <h2 style="text-align: center; margin-bottom: 20px;">EduPortal Login</h2>
             <div class="tabs">
-                <button class="tab-btn active" onclick="toggleAuth('login')">Login</button>
-                <button class="tab-btn" onclick="toggleAuth('signup')">Sign Up</button>
+                <button class="tab-btn active" id="loginTab">Login</button>
+                <button class="tab-btn" id="signupTab">Sign Up</button>
             </div>
-
-            <form id="login-form" onsubmit="handleLogin(event)">
-                <div class="form-group">
-                    <select id="login-role" onchange="toggleAdminKey()">
-                        <option value="student">Student</option>
-                        <option value="admin">Admin</option>
-                    </select>
-                </div>
-                <input type="email" placeholder="Email" required>
-                <input type="password" placeholder="Password" required>
-                <input type="text" id="admin-key" class="hidden" placeholder="Admin Secret Key">
-                <button type="submit" class="btn-main" style="margin-top:15px">Enter Dashboard</button>
+            <form id="auth-form">
+                <input type="text" id="regName" class="hidden" placeholder="Full Name">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <select id="roleSelect">
+                    <option value="student">I am a Student</option>
+                    <option value="admin">I am an Admin</option>
+                </select>
+                <input type="password" id="adminKey" class="hidden" placeholder="Admin Secret Key">
+                <button type="submit" class="btn-main" id="submitBtn">Sign In</button>
             </form>
-
-            <form id="signup-form" class="hidden">
-                <input type="text" placeholder="Full Name" required>
-                <input type="email" placeholder="Email" required>
-                <input type="password" placeholder="Password" required>
-                <button type="submit" class="btn-main" style="margin-top:15px">Create Account</button>
-            </form>
+            <p id="error-msg" style="color:red; text-align:center; font-size:12px; margin-top:10px;"></p>
         </div>
     </div>
 
     <div id="dashboard" class="hidden">
         <nav>
-            <div class="logo"><h2>Edu<b>Portal</b></h2></div>
-            <ul class="nav-links" id="navLinks">
+            <div class="logo"><h3>NearU Portal</h3></div>
+            <ul class="nav-links">
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Profile</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="#" onclick="logout()" style="color:red;">Logout</a></li>
             </ul>
-            <div class="menu-icon" onclick="toggleMenu()">☰</div>
         </nav>
 
         <div class="container">
-            <section class="hero">
-                <h1 id="welcome-msg">Welcome, User!</h1>
-                <p id="current-date"></p>
-                <div class="quote-box">
-                    <p id="random-quote">"Loading inspiration..."</p>
-                </div>
-            </section>
+            <div class="hero">
+                <h1 id="welcomeTitle">Welcome!</h1>
+                <p id="currentDate"></p>
+                <p id="quoteSection" style="margin-top:10px; font-style:italic; color:#555;"></p>
+            </div>
 
             <div class="action-btns">
-                <button class="btn-action btn-pyq" onclick="showSection('pyq-view')"><i class="fas fa-file-pdf"></i> View PYQs</button>
-                <button class="btn-action btn-imp"><i class="fas fa-star"></i> Important Qs</button>
+                <button class="btn-action" style="background:var(--primary)" id="pyqBtn"><i class="fas fa-book"></i> View PYQs</button>
+                <button class="btn-action" style="background:var(--secondary)"><i class="fas fa-lightbulb"></i> Important Questions</button>
             </div>
 
-            <div class="section-card">
-                <h3>My Study List</h3>
-                <div id="todo-list">
-                    <div class="todo-item"><input type="checkbox"> Complete Maths Assignment</div>
-                    <div class="todo-item"><input type="checkbox"> Read Physics Chapter 4</div>
+            <div class="card">
+                <h3>To-Do List</h3>
+                <div id="todoContainer" style="margin-top:10px;">
+                    <label style="display:block;"><input type="checkbox"> Study for Finals</label>
+                    <label style="display:block;"><input type="checkbox"> Download Chemistry PYQ</label>
                 </div>
             </div>
 
-            <div class="section-card">
-                <h3>Leave a Review</h3>
-                <textarea id="rev-input" style="width:100%; padding:10px; margin:10px 0;" placeholder="Tell us what you think..."></textarea>
-                <button class="btn-main" onclick="addReview()">Post Review</button>
-                <div id="reviews-display" style="margin-top:20px; border-top:1px solid #eee; padding-top:10px;">
-                    </div>
+            <div class="card">
+                <h3>Reviews</h3>
+                <textarea id="reviewInput" style="width:100%; height:80px; margin:10px 0;" placeholder="Write a review..."></textarea>
+                <button class="btn-main" id="postRev" style="width:auto; padding:10px 30px;">Post</button>
+                <div id="reviewDisplay" style="margin-top:15px;"></div>
             </div>
         </div>
     </div>
 
     <div id="admin-page" class="hidden container">
-        <div class="section-card">
-            <h2>Admin: Upload PYQ</h2>
-            <div class="form-group">
-                <input type="text" id="subj" placeholder="Subject">
-                <input type="text" id="year" placeholder="Year (e.g. 2024)">
-                <input type="text" id="sem" placeholder="Semester">
-                <input type="file" id="file" style="border:none">
-                <button class="btn-main" onclick="alert('Ready for Firebase Connection!')">Upload Images</button>
-            </div>
-            <button onclick="location.reload()">Back to Home</button>
+        <div class="card">
+            <h2>Admin: Upload PYQs</h2>
+            <input type="text" id="upSubj" placeholder="Subject Name">
+            <input type="text" id="upYear" placeholder="Year (e.g. 2024)">
+            <select id="upSem">
+                <option>Semester 1</option><option>Semester 2</option>
+                <option>Semester 3</option><option>Semester 4</option>
+            </select>
+            <input type="file" id="fileInput" style="border:none;">
+            <button class="btn-main" id="uploadBtn" style="background:#10b981;">Upload to Firebase</button>
+            <button onclick="logout()" style="margin-top:10px; color:gray; border:none; background:none; cursor:pointer;">Back to Login</button>
         </div>
     </div>
 
-    <script>
-        // --- NAVIGATION & UI LOGIC ---
-        function toggleAuth(type) {
-            const loginForm = document.getElementById('login-form');
-            const signupForm = document.getElementById('signup-form');
-            const tabs = document.querySelectorAll('.tab-btn');
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
-            if(type === 'login') {
-                loginForm.classList.remove('hidden');
-                signupForm.classList.add('hidden');
-                tabs[0].classList.add('active');
-                tabs[1].classList.remove('active');
-            } else {
-                loginForm.classList.add('hidden');
-                signupForm.classList.remove('hidden');
-                tabs[1].classList.add('active');
-                tabs[0].classList.remove('active');
-            }
-        }
+        // Your CLIENT CONFIG (Keep this for the website)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwjI1WxObDvOd9v0E7WrB69IwhLX6Uhr4",
+            authDomain: "nearu-c2bcd.firebaseapp.com",
+            projectId: "nearu-c2bcd",
+            storageBucket: "nearu-c2bcd.firebasestorage.app",
+            messagingSenderId: "406211381950",
+            appId: "1:406211381950:web:008b8d04d618a2c579acef"
+        };
 
-        function toggleAdminKey() {
-            const role = document.getElementById('login-role').value;
-            const keyInput = document.getElementById('admin-key');
-            role === 'admin' ? keyInput.classList.remove('hidden') : keyInput.classList.add('hidden');
-        }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
 
-        function handleLogin(e) {
+        // UI Interactions
+        const roleSelect = document.getElementById('roleSelect');
+        const adminKey = document.getElementById('adminKey');
+        const loginTab = document.getElementById('loginTab');
+        const signupTab = document.getElementById('signupTab');
+        let isLoginMode = true;
+
+        roleSelect.onchange = () => {
+            adminKey.classList.toggle('hidden', roleSelect.value !== 'admin');
+        };
+
+        loginTab.onclick = () => { isLoginMode = true; loginTab.classList.add('active'); signupTab.classList.remove('active'); document.getElementById('regName').classList.add('hidden'); };
+        signupTab.onclick = () => { isLoginMode = false; signupTab.classList.add('active'); loginTab.classList.remove('active'); document.getElementById('regName').classList.remove('hidden'); };
+
+        // Handle Login/Signup
+        document.getElementById('auth-form').onsubmit = async (e) => {
             e.preventDefault();
-            const role = document.getElementById('login-role').value;
-            document.getElementById('auth-page').classList.add('hidden');
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const secret = adminKey.value;
+
+            try {
+                if(isLoginMode) {
+                    if(roleSelect.value === 'admin' && secret !== "ADMIN123") throw new Error("Invalid Admin Secret");
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } else {
+                    await createUserWithEmailAndPassword(auth, email, pass);
+                }
+            } catch (err) { document.getElementById('error-msg').innerText = err.message; }
+        };
+
+        // Handle File Upload (Admin Only)
+        document.getElementById('uploadBtn').onclick = async () => {
+            const file = document.getElementById('fileInput').files[0];
+            const subj = document.getElementById('upSubj').value;
+            if(!file || !subj) return alert("Select file and subject!");
+
+            const storageRef = ref(storage, `pyqs/${subj}_${Date.now()}`);
+            await uploadBytes(storageRef, file);
+            const url = await getDownloadURL(storageRef);
             
-            if(role === 'admin') {
-                document.getElementById('admin-page').classList.remove('hidden');
+            await addDoc(collection(db, "pyqs"), {
+                subject: subj,
+                year: document.getElementById('upYear').value,
+                semester: document.getElementById('upSem').value,
+                fileUrl: url
+            });
+            alert("Uploaded Successfully!");
+        };
+
+        // Real-time Reviews
+        document.getElementById('postRev').onclick = async () => {
+            const text = document.getElementById('reviewInput').value;
+            if(!text) return;
+            await addDoc(collection(db, "reviews"), { text, user: auth.currentUser.email, time: serverTimestamp() });
+            document.getElementById('reviewInput').value = "";
+        };
+
+        onSnapshot(query(collection(db, "reviews"), orderBy("time", "desc")), (snap) => {
+            const box = document.getElementById('reviewDisplay');
+            box.innerHTML = "";
+            snap.forEach(doc => {
+                const d = doc.data();
+                box.innerHTML += `<div class="review-box"><strong>${d.user.split('@')[0]}</strong>: ${d.text}</div>`;
+            });
+        });
+
+        // Auth Watcher
+        onAuthStateChanged(auth, (user) => {
+            if(user) {
+                document.getElementById('auth-page').classList.add('hidden');
+                if(roleSelect.value === 'admin') {
+                    document.getElementById('admin-page').classList.remove('hidden');
+                } else {
+                    document.getElementById('dashboard').classList.remove('hidden');
+                    document.getElementById('welcomeTitle').innerText = `Hello, ${user.email.split('@')[0]}!`;
+                    document.getElementById('currentDate').innerText = new Date().toDateString();
+                    document.getElementById('quoteSection').innerText = `"The best way to predict the future is to create it."`;
+                }
             } else {
-                document.getElementById('dashboard').classList.remove('hidden');
-                initDashboard();
+                document.getElementById('auth-page').classList.remove('hidden');
+                document.getElementById('dashboard').classList.add('hidden');
+                document.getElementById('admin-page').classList.add('hidden');
             }
-        }
+        });
 
-        function toggleMenu() {
-            document.getElementById('navLinks').classList.toggle('active');
-        }
-
-        // --- DASHBOARD FEATURES ---
-        function initDashboard() {
-            document.getElementById('current-date').innerText = new Date().toDateString();
-            const quotes = [
-                "Success is the sum of small efforts, repeated day in and day out.",
-                "Education is the most powerful weapon which you can use to change the world.",
-                "The expert in anything was once a beginner."
-            ];
-            document.getElementById('random-quote').innerText = quotes[Math.floor(Math.random() * quotes.length)];
-        }
-
-        function addReview() {
-            const val = document.getElementById('rev-input').value;
-            if(!val) return;
-            const div = document.createElement('div');
-            div.innerHTML = `<p style="background:#f9f9f9; padding:10px; border-radius:5px; margin-bottom:5px">⭐ ${val}</p>`;
-            document.getElementById('reviews-display').prepend(div);
-            document.getElementById('rev-input').value = "";
-        }
+        window.logout = () => signOut(auth);
     </script>
 </body>
 </html>

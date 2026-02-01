@@ -19,27 +19,26 @@
         .tab-btn.active { background: var(--primary); color: white; }
         
         input, select, textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; margin-top: 10px; font-size: 15px; }
-        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; transition: 0.3s; }
-        .btn-main:hover { opacity: 0.9; transform: translateY(-1px); }
+        .btn-main { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; }
 
-        /* Dashboard */
-        nav { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); sticky; top: 0; z-index: 100; }
+        /* Navigation */
+        nav { background: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
         .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
-        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 500; }
-        .logout-btn { color: #ef4444 !important; cursor: pointer; border: 1px solid #fee2e2; padding: 5px 12px; border-radius: 6px; }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 500; cursor: pointer; }
+        .logout-btn { color: #ef4444 !important; border: 1px solid #fee2e2; padding: 6px 15px; border-radius: 8px; font-weight: bold; transition: 0.3s; background: #fff1f2; }
+        .logout-btn:hover { background: #ef4444; color: white !important; }
 
+        /* Dashboard Items */
         .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
         .hero { background: white; padding: 2rem; border-radius: 15px; border-left: 6px solid var(--primary); box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-        
         .action-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 2rem 0; }
-        .btn-action { padding: 1.5rem; border-radius: 12px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 1.1rem; }
-        
+        .btn-action { padding: 1.5rem; border-radius: 12px; border: none; color: white; font-weight: bold; cursor: pointer; font-size: 1.1rem; display: flex; flex-direction: column; align-items: center; gap: 10px; }
         .card { background: white; padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .review-item { padding: 10px; border-bottom: 1px solid #f1f5f9; background: #f8fafc; border-radius: 6px; margin-bottom: 10px; }
 
         @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-links.mobile-active { display: flex; flex-direction: column; position: absolute; top: 100%; left: 0; width: 100%; background: white; padding: 20px; box-shadow: 0 10px 10px rgba(0,0,0,0.1); }
             .action-btns { grid-template-columns: 1fr; }
-            .nav-links { display: none; } /* Mobile menu logic can be added here */
         }
     </style>
 </head>
@@ -61,7 +60,7 @@
                     <option value="admin">Admin Account</option>
                 </select>
                 <input type="password" id="adminKey" class="hidden" placeholder="Admin Secret Key">
-                <button type="submit" class="btn-main" id="submitBtn">Sign In</button>
+                <button type="submit" class="btn-main">Sign In</button>
             </form>
             <p id="error-msg" style="color: #ef4444; text-align:center; font-size:13px; margin-top:10px;"></p>
         </div>
@@ -69,58 +68,56 @@
 
     <div id="dashboard" class="hidden">
         <nav>
-            <div class="logo"><h3 style="color:var(--primary)">NearU Portal</h3></div>
-            <ul class="nav-links">
+            <div class="logo"><h3 style="color:var(--primary)">NearU Student</h3></div>
+            <ul class="nav-links" id="studentNav">
                 <li><a href="#">Home</a></li>
                 <li><a href="#">Profile</a></li>
-                <li><a onclick="logout()" class="logout-btn">Logout</a></li>
+                <li><a onclick="handleLogout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
+            <div style="cursor:pointer;" class="mobile-toggle" onclick="toggleNav('studentNav')">☰</div>
         </nav>
         <div class="container" id="main-content">
             <div class="hero">
-                <h1 id="userNameDisplay">Welcome!</h1>
-                <p id="dateDisplay" style="color:#64748b; margin-top:5px;"></p>
-                <p id="quoteDisplay" style="margin-top:15px; font-style:italic; color:#475569;"></p>
+                <h1 id="userDisplay">Welcome!</h1>
+                <p id="dateDisplay"></p>
+                <p id="quoteDisplay" style="margin-top:10px; font-style:italic;"></p>
             </div>
-
             <div class="action-btns">
-                <button class="btn-action" style="background:var(--primary)" id="viewPyqBtn"><i class="fas fa-file-pdf"></i> View PYQs</button>
+                <button class="btn-action" style="background:var(--primary)" id="viewPyqBtn"><i class="fas fa-book-open"></i> View PYQs</button>
                 <button class="btn-action" style="background:var(--secondary)"><i class="fas fa-lightbulb"></i> Important Qs</button>
             </div>
-
             <div class="card">
                 <h3>To-Do List</h3>
-                <div id="todoList" style="margin-top:10px;">
-                    <label style="display:block; margin:5px 0;"><input type="checkbox"> Finish Math Assignment</label>
-                    <label style="display:block; margin:5px 0;"><input type="checkbox"> Download Chemistry PYQs</label>
+                <div id="todoItems">
+                    <label style="display:block; margin:8px 0;"><input type="checkbox"> Study Physics</label>
                 </div>
             </div>
-
             <div class="card">
-                <h3>Student Reviews</h3>
-                <textarea id="reviewInput" placeholder="Share your experience..."></textarea>
-                <button class="btn-main" id="postReview" style="width:auto; padding:10px 25px;">Post Review</button>
-                <div id="reviewBox" style="margin-top:20px;"></div>
+                <h3>Reviews</h3>
+                <textarea id="revInput" placeholder="Write a review..."></textarea>
+                <button class="btn-main" id="postRevBtn" style="width:auto; padding:8px 25px;">Post</button>
+                <div id="revList" style="margin-top:15px;"></div>
             </div>
         </div>
     </div>
 
     <div id="admin-panel" class="hidden">
         <nav>
-            <div class="logo"><h3>Admin Control</h3></div>
-            <a onclick="logout()" class="logout-btn">Logout</a>
+            <div class="logo"><h3>NearU Admin</h3></div>
+            <ul class="nav-links" id="adminNav">
+                <li><a href="#">Upload History</a></li>
+                <li><a onclick="handleLogout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+            <div style="cursor:pointer;" class="mobile-toggle" onclick="toggleNav('adminNav')">☰</div>
         </nav>
         <div class="container">
             <div class="card">
-                <h2>Upload New PYQ</h2>
-                <input type="text" id="upSubj" placeholder="Subject Name">
-                <input type="number" id="upYear" placeholder="Year (e.g. 2024)">
-                <select id="upSem">
-                    <option>Semester 1</option><option>Semester 2</option>
-                    <option>Semester 3</option><option>Semester 4</option>
-                </select>
-                <input type="file" id="fileInput" style="border:none;">
-                <button class="btn-main" id="uploadBtn" style="background:#10b981;">Upload to Firebase</button>
+                <h2>Admin Upload</h2>
+                <input type="text" id="upSubj" placeholder="Subject">
+                <input type="number" id="upYear" placeholder="Year">
+                <select id="upSem"><option>Semester 1</option><option>Semester 2</option></select>
+                <input type="file" id="fileInput">
+                <button class="btn-main" id="uploadBtn" style="background:#10b981;">Confirm Upload</button>
             </div>
         </div>
     </div>
@@ -145,89 +142,40 @@
         const db = getFirestore(app);
         const storage = getStorage(app);
 
-        // --- AUTH UI LOGIC ---
-        const roleSelect = document.getElementById('roleSelect');
-        const adminKeyField = document.getElementById('adminKey');
+        // --- AUTH & UI TOGGLES ---
+        window.toggleNav = (id) => document.getElementById(id).classList.toggle('mobile-active');
+        
         const loginTab = document.getElementById('loginTab');
         const signupTab = document.getElementById('signupTab');
+        const roleSelect = document.getElementById('roleSelect');
+        const adminKey = document.getElementById('adminKey');
         let isLogin = true;
 
-        roleSelect.onchange = () => adminKeyField.classList.toggle('hidden', roleSelect.value !== 'admin');
         loginTab.onclick = () => { isLogin = true; loginTab.classList.add('active'); signupTab.classList.remove('active'); document.getElementById('regName').classList.add('hidden'); };
         signupTab.onclick = () => { isLogin = false; signupTab.classList.add('active'); loginTab.classList.remove('active'); document.getElementById('regName').classList.remove('hidden'); };
+        roleSelect.onchange = () => adminKey.classList.toggle('hidden', roleSelect.value !== 'admin');
 
+        // --- LOGOUT LOGIC ---
+        window.handleLogout = () => {
+            signOut(auth).then(() => {
+                window.location.reload();
+            }).catch(err => alert(err.message));
+        };
+
+        // --- AUTH SUBMISSION ---
         document.getElementById('auth-form').onsubmit = async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const pass = document.getElementById('password').value;
             if(isLogin) {
-                if(roleSelect.value === 'admin' && adminKeyField.value !== "ADMIN123") return alert("Wrong Admin Key!");
-                signInWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
+                if(roleSelect.value === 'admin' && adminKey.value !== "ADMIN123") return alert("Wrong Admin Key!");
+                await signInWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
             } else {
-                createUserWithEmailAndPassword(auth, email, pass).then(() => alert("Account Created!")).catch(err => alert(err.message));
+                await createUserWithEmailAndPassword(auth, email, pass).catch(err => alert(err.message));
             }
         };
 
-        // --- LOGOUT FUNCTION ---
-        window.logout = () => {
-            signOut(auth).then(() => {
-                location.reload();
-            });
-        };
-
-        // --- ADMIN UPLOAD ---
-        document.getElementById('uploadBtn').onclick = async () => {
-            const file = document.getElementById('fileInput').files[0];
-            const subj = document.getElementById('upSubj').value;
-            if(!file || !subj) return alert("Fill all fields!");
-
-            const storageRef = ref(storage, `pyqs/${Date.now()}_${file.name}`);
-            try {
-                const snap = await uploadBytes(storageRef, file);
-                const url = await getDownloadURL(snap.ref);
-                await addDoc(collection(db, "pyqs"), { 
-                    subject: subj, year: document.getElementById('upYear').value, 
-                    sem: document.getElementById('upSem').value, fileUrl: url, time: serverTimestamp() 
-                });
-                alert("File Uploaded Successfully!");
-            } catch (err) { alert(err.message); }
-        };
-
-        // --- STUDENT PYQ GALLERY ---
-        document.getElementById('viewPyqBtn').onclick = async () => {
-            const content = document.getElementById('main-content');
-            content.innerHTML = "<h2>Loading Library...</h2>";
-            const snap = await getDocs(query(collection(db, "pyqs"), orderBy("time", "desc")));
-            
-            let html = `<h2>PYQ Library</h2><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px; margin-top:20px;">`;
-            snap.forEach(doc => {
-                const d = doc.data();
-                html += `<div class="card" style="margin:0; border-top:5px solid var(--primary)">
-                    <h4>${d.subject}</h4><p>Year: ${d.year}</p><p>${d.sem}</p>
-                    <a href="${d.fileUrl}" target="_blank" class="btn-main" style="display:block; text-align:center; text-decoration:none;">Open PDF/Image</a>
-                </div>`;
-            });
-            html += `</div><button class="btn-main" onclick="location.reload()" style="background:#64748b; margin-top:20px;">Back to Home</button>`;
-            content.innerHTML = html;
-        };
-
-        // --- REVIEWS ---
-        document.getElementById('postReview').onclick = async () => {
-            const text = document.getElementById('reviewInput').value;
-            if(!text) return;
-            await addDoc(collection(db, "reviews"), { text, user: auth.currentUser.email, time: serverTimestamp() });
-            document.getElementById('reviewInput').value = "";
-        };
-
-        onSnapshot(query(collection(db, "reviews"), orderBy("time", "desc")), (snap) => {
-            const box = document.getElementById('reviewBox');
-            box.innerHTML = "";
-            snap.forEach(doc => {
-                box.innerHTML += `<div class="review-item"><strong>${doc.data().user.split('@')[0]}</strong>: ${doc.data().text}</div>`;
-            });
-        });
-
-        // --- AUTH WATCHER ---
+        // --- AUTH OBSERVER ---
         onAuthStateChanged(auth, (user) => {
             if(user) {
                 document.getElementById('auth-page').classList.add('hidden');
@@ -235,12 +183,58 @@
                     document.getElementById('admin-panel').classList.remove('hidden');
                 } else {
                     document.getElementById('dashboard').classList.remove('hidden');
-                    document.getElementById('userNameDisplay').innerText = `Hello, ${user.email.split('@')[0]}!`;
+                    document.getElementById('userDisplay').innerText = `Hello, ${user.email.split('@')[0]}!`;
                     document.getElementById('dateDisplay').innerText = new Date().toDateString();
-                    document.getElementById('quoteDisplay').innerText = `"Learning never exhausts the mind."`;
+                    document.getElementById('quoteDisplay').innerText = `"Success is the sum of small efforts repeated daily."`;
+                    loadReviews();
                 }
+            } else {
+                document.getElementById('auth-page').classList.remove('hidden');
             }
         });
+
+        // --- ADMIN UPLOAD ---
+        document.getElementById('uploadBtn').onclick = async () => {
+            const file = document.getElementById('fileInput').files[0];
+            const subj = document.getElementById('upSubj').value;
+            if(!file || !subj) return alert("Missing file or subject!");
+
+            const sRef = ref(storage, `pyqs/${Date.now()}_${file.name}`);
+            try {
+                const snap = await uploadBytes(sRef, file);
+                const url = await getDownloadURL(snap.ref);
+                await addDoc(collection(db, "pyqs"), { subject: subj, year: document.getElementById('upYear').value, sem: document.getElementById('upSem').value, fileUrl: url, time: serverTimestamp() });
+                alert("Upload Success!");
+            } catch (err) { alert(err.message); }
+        };
+
+        // --- REVIEWS & PYQ LIBRARY ---
+        function loadReviews() {
+            onSnapshot(query(collection(db, "reviews"), orderBy("time", "desc")), (snap) => {
+                const list = document.getElementById('revList');
+                list.innerHTML = "";
+                snap.forEach(doc => list.innerHTML += `<div class="card" style="margin-top:10px; padding:10px;"><strong>${doc.data().user.split('@')[0]}</strong>: ${doc.data().text}</div>`);
+            });
+        }
+
+        document.getElementById('postRevBtn').onclick = async () => {
+            const val = document.getElementById('revInput').value;
+            if(val) await addDoc(collection(db, "reviews"), { text: val, user: auth.currentUser.email, time: serverTimestamp() });
+            document.getElementById('revInput').value = "";
+        };
+
+        document.getElementById('viewPyqBtn').onclick = async () => {
+            const main = document.getElementById('main-content');
+            main.innerHTML = "<h3>Fetching Library...</h3>";
+            const snap = await getDocs(query(collection(db, "pyqs"), orderBy("time", "desc")));
+            let html = `<h2>PYQ Library</h2><div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:15px; margin-top:20px;">`;
+            snap.forEach(doc => {
+                const d = doc.data();
+                html += `<div class="card" style="margin:0; border-top:5px solid var(--primary)"><h4>${d.subject}</h4><p>${d.year} | ${d.sem}</p><a href="${d.fileUrl}" target="_blank" class="btn-main" style="display:block; text-align:center; text-decoration:none;">Open File</a></div>`;
+            });
+            html += `</div><button class="btn-main" onclick="location.reload()" style="background:#64748b; margin-top:20px;">Return Home</button>`;
+            main.innerHTML = html;
+        };
     </script>
 </body>
 </html>
